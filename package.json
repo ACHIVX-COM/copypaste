@@ -1,0 +1,30 @@
+{
+  "name": "copypaste",
+  "version": "0.0.1",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "[ \"$NODE_ENV\" = \"production\" ] && exit; husky"
+  },
+  "author": "ACHIVX",
+  "license": "MIT",
+  "description": "",
+  "workspaces": [
+    "copypaste",
+    "copypaste-server"
+  ],
+  "lint-staged": {
+    "*.{yaml,json}": "prettier --write",
+    "*.js": [
+      "eslint --fix",
+      "prettier --write"
+    ]
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.9.0",
+    "eslint": "^9.9.0",
+    "husky": "^9.1.5",
+    "lint-staged": "^15.2.9",
+    "prettier": "^3.3.3"
+  }
+}
