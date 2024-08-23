@@ -1,11 +1,14 @@
 /**
- * @typedef {import('./index.js').PartialDocument} PartialShingledDocument
+ * @typedef {Object} ShinglesMixin
  * @prop {string[]} shingles
  */
 
 /**
- * @typedef {import('./index.js').Document} ShingledDocument
- * @prop {string[]} shingles
+ * @typedef {import('./detector.js').PartialDocument & ShinglesMixin} PartialShingledDocument
+ */
+
+/**
+ * @typedef {import('./detector.js').Document & ShinglesMixin} ShingledDocument
  */
 
 /**
@@ -23,7 +26,7 @@ module.exports.CopypasteStore = class CopypasteStore {
   /**
    * Store the document to this storage.
    *
-   * @param {ShingledDocument} _doc 
+   * @param {ShingledDocument} doc 
    */
   async storeDocument(_doc) {
     throw new Error();
@@ -43,7 +46,7 @@ module.exports.CopypasteStore = class CopypasteStore {
    * Extracts a document from the storage.
    * 
    * @param {string} _id 
-   * @returns {import('./index.js').Document?}
+   * @returns {import('./detector.js').Document?}
    */
   async getDocument(_id) {
     throw new Error();
@@ -57,6 +60,7 @@ module.exports.CopypasteStore = class CopypasteStore {
    * @param {PartialShingledDocument} _doc 
    * @param {SimilarityLimits} _thresholds minimal similarity threshold to return documents with
    * @param {number} _limit max. documents to return. Must be > 0
+   * @returns {AsyncIterable<import('./detector.js').SimilarDocument>}
    */
   async* findSimilar(_doc, _thresholds, _limit) {
     throw new Error();

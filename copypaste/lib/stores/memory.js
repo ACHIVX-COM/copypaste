@@ -5,6 +5,8 @@ const { CopypasteStore } = require("../store");
  * A CopypasteStore that stores documents in memory.
  *
  * It is not very efficient and fits mostly for small tasks, like searching for similarities among few dozens of small documents.
+ * 
+ * @augments CopypasteStore
  */
 module.exports.MemoryCopypasteStore = class MemoryCopypasteStore extends (
   CopypasteStore
@@ -17,8 +19,10 @@ module.exports.MemoryCopypasteStore = class MemoryCopypasteStore extends (
 
   /**
    * @inheritdoc
+   * @param {import("../store").ShingledDocument} doc
    */
-  async storeDocument({ id, textParts, meta, shingles }) {
+  async storeDocument(doc) {
+    const { id, textParts, meta, shingles } = doc;
     this.#store.set(id, { textParts, meta, shingles });
   }
 
@@ -75,14 +79,14 @@ module.exports.MemoryCopypasteStore = class MemoryCopypasteStore extends (
       })
       .filter(({ relSimilarity, absSimilarity }) => {
         if (thresholds.relSimilarity > 0.0) {
-          if (relSimilarity < thresholds.relSimilarity) {
-            return false;
+          if (relSimilarity > thresholds.relSimilarity) {
+            return true;
           }
         }
 
         if (thresholds.absSimilarity > 0) {
-          if (absSimilarity < thresholds.absSimilarity) {
-            return false;
+          if (absSimilarity > thresholds.absSimilarity) {
+            return true;
           }
         }
       })
