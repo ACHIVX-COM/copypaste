@@ -1,5 +1,4 @@
 const assert = require("node:assert");
-const { Db, Collection } = require("mongodb");
 const { CopypasteStore } = require("../store");
 
 /**
@@ -16,6 +15,9 @@ module.exports.MongodbCopypasteStore = class MongodbCopypasteStore extends (
 
   constructor(db, collectionsPrefix = "copypaste") {
     super();
+
+    // Require mongodb driver dynamically to avoid failing when it is not installed but mongodb store is not used as well
+    const { Db } = require('mongodb');
     assert.ok(db instanceof Db, "db must be a mongodb database");
 
     this.#db = db;

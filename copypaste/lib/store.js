@@ -62,7 +62,7 @@ module.exports.CopypasteStore = class CopypasteStore {
    * @param {number} _limit max. documents to return. Must be > 0
    * @returns {AsyncIterable<import('./detector.js').SimilarDocument>}
    */
-  async* findSimilar(_doc, _thresholds, _limit) {
+  async findSimilar(_doc, _thresholds, _limit) {
     throw new Error();
   }
 }

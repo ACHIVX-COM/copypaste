@@ -15,7 +15,7 @@ const { MemoryCopypasteStore } = require("./stores/memory");
 const gen2array = async (gen) => {
   const arr = [];
 
-  for await (el of gen) {
+  for await (const el of gen) {
     arr.push(el);
   }
 
@@ -37,6 +37,7 @@ describe("CopypasteDetector", () => {
           createShingles(),
         ),
       });
+
       await detector.rememberDocument({
         id: "1",
         meta: {},
@@ -44,7 +45,6 @@ describe("CopypasteDetector", () => {
           "Jest is a delightful JavaScript Testing Framework with a focus on simplicity.",
         ],
       });
-
     });
 
     it("should detect exactly copied texts", async () => {

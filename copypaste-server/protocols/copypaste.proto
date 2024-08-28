@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+package achivx.copypaste;
+
+service Copypaste {
+  rpc rememberDocument(Document) returns (StoredDocumentResponse);
+
+  rpc forgetDocument(DocumentRequest);
+
+  rpc getDocument(DocumentRequest) returns (Document);
+
+  rpc checkDocument(CheckDocumentRequest) returns (stream SimilarDocument);
+}
+
+message DocumentMeta {
+  string name = 1;
+  string value = 2;
+}
+
+message Document {
+  string id = 1;
+  repeated string text = 2;
+  repeated DocumentMeta meta = 3;
+}
+
+message StoredDocumentResponse {
+  string id = 1;
+}
+
+message DocumentRequest {
+  string id = 1;
+}
+
+message CheckDocumentRequest {
+  repeated string text = 2;
+  repeated DocumentMeta meta = 3;
+}
+
+message SimilarDocument {
+  string id = 1;
+  float relSimilarity = 2;
+  int64 absSimilarity = 3;
+}
