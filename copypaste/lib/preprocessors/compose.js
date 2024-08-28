@@ -5,6 +5,14 @@
 module.exports.composePreprocessors = function composePreprocessors(
   ...preprocessors
 ) {
+  if (preprocessors.length === 0) {
+    return textParts => textParts;
+  }
+
+  if (preprocessors.length === 1) {
+    return preprocessors[0];
+  }
+
   return async (textParts, meta) => {
     let currentTextParts = textParts;
 

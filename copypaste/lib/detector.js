@@ -42,17 +42,26 @@ const DocumentNotFoundError =
     }
   });
 
+/**
+ * @typedef {Object} DetectorParameters
+ * @prop {import('./store').CopypasteStore} store
+ * @prop {import('./store').SimilarityLimits} limits
+ * @prop {Preprocessor} preprocessor
+ */
+
 module.exports.CopypasteDetector = class CopypasteDetector {
   #store;
   #thresholds;
   #preprocessor;
 
   /**
-   * @param {import('./store').CopypasteStore} store
-   * @param {import('./store').SimilarityLimits} thresholds
-   * @param {Preprocessor} preprocessor
+   * @param {DetectorParameters} parameters
    */
-  constructor(store, thresholds, preprocessor) {
+  constructor({
+    store,
+    thresholds = { absSimilarity: -1, relSimilarity: 0.5 },
+    preprocessor,
+  }) {
     assert.ok(
       thresholds.absSimilarity > 0 ||
         (thresholds.relSimilarity > 0.0 && thresholds.relSimilarity < 1.0),

@@ -19,10 +19,20 @@ function nGrams(input, n) {
 }
 
 /**
+ * Create a preprocessor that creates shingles from incoming tokens.
+ * 
+ * For example, tokens sequence
+ * 
+ * ["this", "is", "a", "test", "sentence"]
+ * 
+ * will be converted to the following shingles sequence:
+ * 
+ * ["this_is_a_s3", "is_a_test_s3", "a_test_sentence_s3", "this_is_a_test_sentence_s5"]
+ *
  * @param {{sizes: number[]}} settings
  * @returns {import("../detector").Preprocessor}
  */
-module.exports.createShingles = function createShingles({ sizes }) {
+module.exports.createShingles = function createShingles({ sizes = [3, 5] } = {}) {
   assert.ok(sizes.length > 0);
   assert.ok(sizes.every((size) => size > 0 && Number.isInteger(size)));
 

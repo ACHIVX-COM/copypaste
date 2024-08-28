@@ -14,6 +14,7 @@ module.exports.MemoryCopypasteStore = class MemoryCopypasteStore extends (
   #store;
 
   constructor() {
+    super();
     this.#store = new Map();
   }
 
@@ -23,7 +24,7 @@ module.exports.MemoryCopypasteStore = class MemoryCopypasteStore extends (
    */
   async storeDocument(doc) {
     const { id, textParts, meta, shingles } = doc;
-    this.#store.set(id, { textParts, meta, shingles });
+    this.#store.set(id, { id, textParts, meta, shingles });
   }
 
   /**
@@ -64,7 +65,7 @@ module.exports.MemoryCopypasteStore = class MemoryCopypasteStore extends (
           shinglesSet.add(shingle);
         }
 
-        const unionSize = shinglesSet.size();
+        const unionSize = shinglesSet.size;
         const intersectionSize =
           doc.shingles.length + shingles.length - unionSize;
         const relSimilarity = intersectionSize / unionSize;

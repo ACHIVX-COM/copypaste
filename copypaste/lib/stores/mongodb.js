@@ -15,6 +15,7 @@ module.exports.MongodbCopypasteStore = class MongodbCopypasteStore extends (
   #collectionsPromise;
 
   constructor(db, collectionsPrefix = "copypaste") {
+    super();
     assert.ok(db instanceof Db, "db must be a mongodb database");
 
     this.#db = db;
