@@ -23,11 +23,9 @@
   "devDependencies": {
     "@eslint/js": "^9.9.0",
     "eslint": "^9.9.0",
+    "eslint-plugin-jest": "^28.8.2",
     "husky": "^9.1.5",
     "lint-staged": "^15.2.9",
     "prettier": "^3.3.3"
-  },
-  "dependencies": {
-    "eslint-plugin-jest": "^28.8.0"
   }
 }

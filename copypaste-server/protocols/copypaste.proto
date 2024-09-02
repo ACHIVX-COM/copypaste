@@ -3,13 +3,13 @@ syntax = "proto3";
 package achivx.copypaste;
 
 service Copypaste {
-  rpc rememberDocument(Document) returns (StoredDocumentResponse);
+  rpc RememberDocument(Document) returns (StoredDocumentResponse);
 
-  rpc forgetDocument(DocumentRequest);
+  rpc ForgetDocument(DocumentRequest) returns (Empty);
 
-  rpc getDocument(DocumentRequest) returns (Document);
+  rpc GetDocument(DocumentRequest) returns (Document);
 
-  rpc checkDocument(CheckDocumentRequest) returns (stream SimilarDocument);
+  rpc CheckDocument(CheckDocumentRequest) returns (stream SimilarDocument);
 }
 
 message DocumentMeta {
@@ -30,6 +30,8 @@ message StoredDocumentResponse {
 message DocumentRequest {
   string id = 1;
 }
+
+message Empty {}
 
 message CheckDocumentRequest {
   repeated string text = 2;

@@ -7,7 +7,7 @@ const nlpUtils = require("wink-nlp-utils");
  * @returns {import('../detector').Preprocessor}
  */
 module.exports.tokenize = function tokenize() {
-  return async (textParts) => textParts.flatMap(nlpUtils.string.tokenize);
+  return async (textParts) => textParts.flatMap(nlpUtils.string.tokenize0);
 };
 
 /**

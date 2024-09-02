@@ -32,7 +32,7 @@ const defaultPreprocessor = composePreprocessors(
 );
 
 /**
- * @param {CopypasteDetector} detector 
+ * @param {CopypasteDetector} detector
  */
 const addCommonDocs = async (detector) => {
   await detector.rememberDocument({
@@ -45,7 +45,7 @@ const addCommonDocs = async (detector) => {
 };
 
 /**
- * @param {{detector: CopypasteDetector}} scope 
+ * @param {{detector: CopypasteDetector}} scope
  */
 const defineCommonTests = (scope) => {
   it("should detect exactly copied texts", async () => {
@@ -67,7 +67,7 @@ const defineCommonTests = (scope) => {
       scope.detector.checkDocument({
         meta: {},
         textParts: [
-          "Jests are the delightedly javascript test frameworks focused on simplicity.",
+          "Jests are the delightedly javascript test frameworks focused on simplicity!",
         ],
       }),
     );
