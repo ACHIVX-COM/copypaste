@@ -20,6 +20,7 @@
     "wink-nlp-utils": "^2.1.0"
   },
   "devDependencies": {
+    "@shelf/jest-mongodb": "^4.3.2",
     "jest": "^29.7.0"
   }
 }

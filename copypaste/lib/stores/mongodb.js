@@ -24,7 +24,7 @@ module.exports.MongodbCopypasteStore = class MongodbCopypasteStore extends (
     this.#collectionsPrefix = collectionsPrefix;
 
     this.#collectionsPromise = this.#createCollections();
-    this.#collectionsPromise.then((err) =>
+    this.#collectionsPromise.catch((err) =>
       console.error(
         `Error creating collections for copypaste storage with prefix ${collectionsPrefix}:`,
         err,
@@ -33,7 +33,7 @@ module.exports.MongodbCopypasteStore = class MongodbCopypasteStore extends (
   }
 
   async #createCollections() {
-    const docs = await this.#db.createCollection(
+    const docs = await this.#db.collection(
       `${this.#collectionsPrefix}.documents`,
     );
     docs.createIndex(
