@@ -5,9 +5,9 @@
   "scripts": {
     "test": "jest"
   },
-  "author": "",
+  "author": "ACHIVX",
   "license": "MIT",
-  "description": "",
+  "description": "Implementation of W-shingling algorithm for similar text documents search",
   "peerDependencies": {
     "mongodb": "^6.8.0"
   },

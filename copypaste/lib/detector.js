@@ -42,10 +42,17 @@ const DocumentNotFoundError =
     }
   });
 
+const TextTooShortError =
+  (module.exports.TextTooShortError = class TextTooShortError extends Error {
+    constructor() {
+      super("Text is too short");
+    }
+  });
+
 /**
  * @typedef {Object} DetectorParameters
  * @prop {import('./store').CopypasteStore} store
- * @prop {import('./store').SimilarityLimits} limits
+ * @prop {import('./store').SimilarityThresholds} thresholds
  * @prop {Preprocessor} preprocessor
  */
 
@@ -80,6 +87,10 @@ module.exports.CopypasteDetector = class CopypasteDetector {
     const { id, meta, textParts } = doc;
     const shingles = await this.#preprocessor(textParts, meta);
 
+    if (shingles?.length < 1) {
+      throw new TextTooShortError();
+    }
+
     return { id, meta, textParts, shingles };
   }
 
@@ -87,6 +98,7 @@ module.exports.CopypasteDetector = class CopypasteDetector {
    * Add document to storage.
    *
    * @param {Document} doc
+   * @throws {TextTooShortError}
    */
   async rememberDocument(doc) {
     await this.#store.storeDocument(await this.#preprocessDocument(doc));
@@ -124,6 +136,7 @@ module.exports.CopypasteDetector = class CopypasteDetector {
    * @param {PartialDocument} doc the document to check
    * @param {number} similarLimit max. similar documents to return
    * @returns {AsyncIterable<SimilarDocument>}
+   * @throws {TextTooShortError} if text of the given document is too short
    */
   async *checkDocument(doc, similarLimit = 1) {
     yield* this.#store.findSimilar(

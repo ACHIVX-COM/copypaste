@@ -17,7 +17,14 @@ services:
   copypaste:
     profiles: ["build"]
     build:
-      context: ..
+      context: .
+    environment:
+      - MONGODB_URI=mongodb://mongodb/achivx-copypaste
+    ports:
+      - 50051:50051
+  copypaste-prebuilt:
+    profiles: ["prebuilt"]
+    image: achivx/copypaste:master
     environment:
       - MONGODB_URI=mongodb://mongodb/achivx-copypaste
     ports:

@@ -22,6 +22,12 @@ const main = (module.exports.main = async () => {
   const address = process.env.BIND_ADDRESS ?? "0.0.0.0:50051";
   const collectionPrefix =
     process.env.COPYPASTE_COLLECTION_PREFIX || "copypaste";
+  const absSimilarityThreshold = parseInt(
+    process.env.COPYPASTE_ABS_SIMILARITY_THRESHOLD ?? "-1",
+  );
+  const relSimilarityThreshold = parseFloat(
+    process.env.COPYPASTE_REL_SIMILARITY_THRESHOLD ?? "0.5",
+  );
 
   assert.ok(mongodbUri, "MONGODB_URI environment variable must be set");
 
@@ -32,7 +38,10 @@ const main = (module.exports.main = async () => {
       createServer({
         detector: new CopypasteDetector({
           store: new MongodbCopypasteStore(connection.db(), collectionPrefix),
-          limits: { absSimilarity: -1, relSimilarity: 0.5 },
+          thresholds: {
+            absSimilarity: absSimilarityThreshold,
+            relSimilarity: relSimilarityThreshold,
+          },
           preprocessor: composePreprocessors(
             tokenize(),
             removeStopWords(),

@@ -2,10 +2,17 @@ const unaryAsyncImpl = require("./utils/unaryAsyncImpl");
 const streamAsyncImpl = require("./utils/streamAsyncImpl");
 const { InvalidArgument, NotFound } = require("./utils/errors");
 const { DocumentNotFoundError } = require("@achivx/copypaste");
+const { TextTooShortError } = require("@achivx/copypaste/lib/detector");
 
 function validateInboundText(text) {
   if (!text?.length) {
     throw new InvalidArgument("No text provided");
+  }
+}
+
+function validateInboundId(id) {
+  if (!id) {
+    throw new InvalidArgument("Document id is missing");
   }
 }
 
@@ -28,7 +35,7 @@ function parseInboundMeta(meta) {
 function metaToResponse(meta) {
   const res = [];
 
-  for (const [name, value] in Object.entries(meta)) {
+  for (const [name, value] of Object.entries(meta)) {
     res.push({ name, value });
   }
 
@@ -44,14 +51,23 @@ module.exports.makeCopypasteService = ({ detector }) => ({
       request: { id, text, meta },
     } = call;
 
-    if (!id) {
-      throw new InvalidArgument("Document id is missing");
-    }
+    validateInboundId(id);
 
     validateInboundText(text);
     const parsedMeta = parseInboundMeta(meta);
 
-    await detector.rememberDocument({ id, meta: parsedMeta, textParts: text });
+    try {
+      await detector.rememberDocument({
+        id,
+        meta: parsedMeta,
+        textParts: text,
+      });
+    } catch (err) {
+      if (err instanceof TextTooShortError) {
+        throw new InvalidArgument("The text is too short");
+      }
+      throw err;
+    }
 
     return { id };
   }),
@@ -61,9 +77,7 @@ module.exports.makeCopypasteService = ({ detector }) => ({
       request: { id },
     } = call;
 
-    if (!id) {
-      throw new InvalidArgument("Document id is missing");
-    }
+    validateInboundId(id);
 
     await detector.forgetDocument(id);
 
@@ -75,16 +89,14 @@ module.exports.makeCopypasteService = ({ detector }) => ({
       request: { id },
     } = call;
 
-    if (!id) {
-      throw new InvalidArgument("Document id is missing");
-    }
+    validateInboundId(id);
 
     try {
-      const { id, meta, textParts } = await detector.fetchDocument(id);
+      const { meta, textParts } = await detector.fetchDocument(id);
 
       return {
         id,
-        textParts,
+        text: textParts,
         meta: metaToResponse(meta),
       };
     } catch (err) {
@@ -98,18 +110,30 @@ module.exports.makeCopypasteService = ({ detector }) => ({
 
   CheckDocument: streamAsyncImpl(async function* (call) {
     const {
-      request: { text, meta },
+      request: { text, meta, maxSimilar },
     } = call;
 
     validateInboundText(text);
     const parsedMeta = parseInboundMeta(meta);
+    const similarLimit = Math.max(1, parseInt(maxSimilar) || 1);
 
-    for await (const {
-      id,
-      absSimilarity,
-      relSimilarity,
-    } of detector.checkDocument({ meta: parsedMeta, textParts: text })) {
-      yield { id, absSimilarity, relSimilarity };
+    try {
+      for await (const {
+        id,
+        absSimilarity,
+        relSimilarity,
+      } of detector.checkDocument(
+        { meta: parsedMeta, textParts: text },
+        similarLimit,
+      )) {
+        yield { id, absSimilarity, relSimilarity };
+      }
+    } catch (err) {
+      if (err instanceof TextTooShortError) {
+        throw new InvalidArgument("The text is too short");
+      }
+
+      throw err;
     }
   }),
 });

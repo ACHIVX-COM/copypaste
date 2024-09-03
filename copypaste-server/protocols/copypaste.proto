@@ -2,24 +2,69 @@ syntax = "proto3";
 
 package achivx.copypaste;
 
+/**
+ * An interface for text document storage with similar documents search support.
+ */
 service Copypaste {
+  /**
+   * Write a document to the storage.
+   *
+   * Will overwrite existing document with the same id if it exists.
+   */
   rpc RememberDocument(Document) returns (StoredDocumentResponse);
 
+  /**
+   * Remove document from the storage.
+   */
   rpc ForgetDocument(DocumentRequest) returns (Empty);
 
+  /**
+   * Get document contents from the storage.
+   */
   rpc GetDocument(DocumentRequest) returns (Document);
 
+  /**
+   * Check given document for similarities with documents in the storage.
+   *
+   * Returns a stream of similar documents.
+   * The stream is empty if none of documents in the storage are similar enough to the given document.
+   */
   rpc CheckDocument(CheckDocumentRequest) returns (stream SimilarDocument);
 }
 
+/**
+ * Document metadata entry.
+ *
+ * Document metadata is a set of key-value pairs that is stored along with the document.
+ * It can be accessed when fetching document contents using `GetDocument`.
+ * It also can be accessed by custom text preprocessors in order to, for example, use different preprocessing algorithms
+ * for texts in different languages when text language is stored as a metadata entry.
+ */
 message DocumentMeta {
   string name = 1;
   string value = 2;
 }
 
 message Document {
+  /**
+   * Document's unique id.
+   * 
+   * Must be present and unique.
+   */
   string id = 1;
+
+  /**
+   * Document text.
+   *
+   * May be split up into few strings.
+   */
   repeated string text = 2;
+
+  /**
+   * Document metadata.
+   *
+   * See `DocumentMeta`.
+   */
   repeated DocumentMeta meta = 3;
 }
 
@@ -34,12 +79,43 @@ message DocumentRequest {
 message Empty {}
 
 message CheckDocumentRequest {
+  /**
+   * Text of the document to check.
+   */
   repeated string text = 2;
+
+  /**
+   * Metadata of the document to check.
+   */
   repeated DocumentMeta meta = 3;
+
+  /**
+   * Maximal number of similar documents to return.
+   *
+   * If omitted, at most one document will be returned.
+   */
+  optional int64 maxSimilar = 4;
 }
 
 message SimilarDocument {
+  /**
+   * Id of the found similar document.
+   *
+   * Full content and metadata of the document can be accessed by calling `GetDocument`.
+   */
   string id = 1;
+
+  /**
+   * Relative similarity of documents.
+   *
+   * A number between 0.0 (exclusive) and 1.0 (inclusive).
+   */
   float relSimilarity = 2;
+
+  /**
+   * Absolute similarity of documents.
+   *
+   * An integer representing number of matching elements between the checked document and the similar stored document.
+   */
   int64 absSimilarity = 3;
 }
